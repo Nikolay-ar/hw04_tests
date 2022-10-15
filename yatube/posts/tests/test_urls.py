@@ -9,7 +9,6 @@ User = get_user_model()
 
 class PostsURLTestCase(TestCase):
     """Тестируем URLs"""
-
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

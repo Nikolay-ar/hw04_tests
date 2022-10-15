@@ -65,10 +65,10 @@ class PostFormTests(TestCase):
         """Валидная форма редактирует запись в Post."""
         form_data = {
             'text': 'Тестовый текст 1',
-            'group': self.group.pk }
+            'group': self.group.pk}
         response = self.authorized_client.post(
             reverse('posts:post_edit', args=[self.post.id]),
-            data=form_data )
+            data=form_data)
         # Проверяем, сработал ли редирект
         self.assertRedirects(
             response, reverse('posts:post_detail', args=[self.post.id]))

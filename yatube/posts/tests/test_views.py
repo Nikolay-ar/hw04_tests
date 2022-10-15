@@ -40,7 +40,7 @@ class PostsPagesTestCase(TestCase):
                 'posts/post_detail.html',
             reverse('posts:post_create'): 'posts/create_post.html',
             reverse('posts:post_edit', args=[self.post.pk]):
-                f'posts/create_post.html',
+                'posts/create_post.html',
         }
         for reverse_name, template in templates_pages_names.items():
             with self.subTest(reverse_name=reverse_name):
@@ -49,13 +49,12 @@ class PostsPagesTestCase(TestCase):
                     response, template,
                     f'не тот {reverse_name} для {template}')
 
-
     def test_home_page_show_correct_context(self):
         """Шаблон index сформирован с правильным контекстом."""
         response = self.authorized_client.get(reverse('posts:index'))
         first_object = response.context['page_obj'][0]
         post_author = first_object.author
-        post_group =  first_object.group
+        post_group = first_object.group
         post_text = first_object.text
         self.assertEqual(response.status_code, 200,
                          'страница index не доступна')
@@ -77,25 +76,25 @@ class PaginatorViewsTest(TestCase):
         super().setUpClass()
         cls.posts = []
         cls.author = User.objects.create_user(username='dimdim')
-        cls.group =  Group.objects.create(
+        cls.group = Group.objects.create(
             title='Тестовый заголовок',
             description='Тестовый текст описания',
             slug='test-slug'
         )
         cls.guest_client = Client()
-        for count in range (1, 14):
+        for count in range(1, 14):
             cls.posts.append(
                 Post.objects.create(
                     text=f'Пост № {count}',
                     author=cls.author,
                     group=cls.group
-            ))
+                ))
 
     def test_page_contains_ten_records(self):
         reverse_names = [
             reverse('posts:index'),
             reverse('posts:group_list', args=[self.group.slug]),
-            reverse('posts:profile',  args=[self.author]),
+            reverse('posts:profile', args=[self.author])
         ]
         for reverse_name in reverse_names:
             with self.subTest(reverse_name=reverse_name):
