@@ -1,0 +1,32 @@
+<!-- templates/posts/group_list.html -->
+{% extends 'base.html' %}
+
+{% block head_title %}
+  <title>
+    Записи сообщества {{ group.title }}
+  </title>
+{% endblock %}
+
+{% block content %}
+  <div class="container py-5">
+  <h1> {{ group.title }}</h1><br>
+  <p> {{ group.description }}</p>
+  {% for post in page_obj %}
+    <article>
+      <ul>
+        <li>
+          Автор: {{ post.author.get_full_name }}
+        </li>
+        <li>
+          Дата публикации: {{ post.pub_date|date:"d E Y" }}
+        </li>
+      </ul>
+      <p>{{ post.text }}</p>
+    </article>
+    {% if not forloop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+  {% include 'posts/includes/paginator.html' %}
+  </div>
+{% endblock %}
