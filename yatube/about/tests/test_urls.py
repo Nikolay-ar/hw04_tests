@@ -11,7 +11,6 @@ class AuthorTechPageURLTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'about/author.html')
 
-
     def test_author_url_exists_at_desired_location(self):
         """Проверка доступности адреса /tech/ и шаблона tech.html."""
         response = self.guest_client.get('/about/tech/')
