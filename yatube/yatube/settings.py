@@ -24,6 +24,8 @@ SECRET_KEY = 'pulngypl)cm+rt=39hjj*y6ygf6!h8=3#xh2cm_=hl=e-au#ll'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
+
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',

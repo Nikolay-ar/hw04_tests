@@ -14,13 +14,14 @@ class PostsURLTestCase(TestCase):
         super().setUpClass()
         # Для класса PostsURLTestCase создадим пользователя модели User
         cls.user = User.objects.create_user(username='TestUser')
+        cls.user1 = User.objects.create_user(username='TestUser1')
         Group.objects.create(
             title='Тестовый заголовок',
             description='Тестовый текст описания',
             slug='test-slug'
         )
         # Создадим запись в БД для проверки доступности адреса /posts/post-id/
-        Post.objects.create(
+        cls.post = Post.objects.create(
             text='Тестовый текст',
             author=cls.user
         )
@@ -28,8 +29,9 @@ class PostsURLTestCase(TestCase):
     def setUp(self):
         self.guest_client = Client()
         self.authorized_client = Client()
+        self.authorized_client1 = Client()
         self.authorized_client.force_login(self.user)
-        self.post = Post.objects.get(text='Тестовый текст')
+        self.authorized_client1.force_login(self.user1)
 
     def test_urls_use_correct_templates(self):
         """URL адреса используют соответствующие шаблоны
@@ -64,3 +66,9 @@ class PostsURLTestCase(TestCase):
                 self.assertEqual(
                     response.status_code, 200, 'страница не доступна')
                 self.assertTemplateUsed(response, template, 'не тот template')
+
+    def test_not_the_author_urls_use_redirect(self):
+        """URL адрес не доступен авторизованному пользователю, не автору"""
+        response = self.authorized_client1.get(f'/posts/{self.post.pk}/edit/')
+        self.assertEqual(
+            response.status_code, 302, 'не выполняется редирект')

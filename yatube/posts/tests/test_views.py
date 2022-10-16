@@ -7,24 +7,25 @@ User = get_user_model()
 
 
 class PostsPagesTestCase(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        Group.objects.create(
-            title='Тестовый заголовок',
-            description='Тестовый текст описания',
-            slug='test-slug'
-        )
 
     def setUp(self):
         self.user = User.objects.create_user(username='StasBasov')
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
-        Post.objects.create(
+        self.group = Group.objects.create(title='Тестовая группа',
+                                          slug='test_group')
+        self.post = Post.objects.create(
             text='Тестовый текст',
-            author=self.user
+            author=self.user,
+            group=self.group
         )
-        self.post = Post.objects.get(text='Тестовый текст')
+
+    def test_post_added_correctly(self):
+        """Пост при создании добавлен корректно"""
+        response_group = self.authorized_client.get(
+            reverse('posts:group_list', args=[self.group.slug]))
+        group = response_group.context['page_obj']
+        self.assertIn(self.post, group, 'поста нет в профиле')
 
     def test_pages_uses_correct_templates(self):
         """URL адреса используют соответствующие шаблоны"""
@@ -32,7 +33,7 @@ class PostsPagesTestCase(TestCase):
         # Собираем в словарь пары reverse(name): "имя_html_шаблона"
         templates_pages_names = {
             reverse('posts:index'): 'posts/index.html',
-            (reverse('posts:group_list', kwargs={'slug': 'test-slug'})):
+            (reverse('posts:group_list', kwargs={'slug': 'test_group'})):
                 'posts/group_list.html',
             reverse('posts:profile', args=[self.user]):
                 'posts/profile.html',
@@ -82,13 +83,12 @@ class PaginatorViewsTest(TestCase):
             slug='test-slug'
         )
         cls.guest_client = Client()
-        for count in range(1, 14):
-            cls.posts.append(
-                Post.objects.create(
-                    text=f'Пост № {count}',
-                    author=cls.author,
-                    group=cls.group
-                ))
+        bilk_post: list = []
+        for i in range(1, 14):
+            bilk_post.append(Post(text=f'Тестовый текст {i}',
+                                  group=cls.group,
+                                  author=cls.author))
+        Post.objects.bulk_create(bilk_post)
 
     def test_page_contains_ten_records(self):
         reverse_names = [

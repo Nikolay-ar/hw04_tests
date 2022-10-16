@@ -44,22 +44,12 @@ class PostFormTests(TestCase):
         # Проверяем, сработал ли редирект
         self.assertRedirects(response,
                              reverse('posts:profile', args=[self.user]))
-        self.assertEqual(
-            Post.objects.count(), posts_count + 1,
-            'Число постов не увеличилось')
         self.assertTrue(Post.objects.filter(
             text=form_data['text'],
             group=form_data['group'],
             author=self.user,
         ).exists(),
             'Не создалась запись с заданным текстом')
-        new_post = Post.objects.latest('id')
-        self.assertEqual(new_post.text, form_data['text'],
-                         'post_create не правильно сохраняет текст поста')
-        self.assertEqual(new_post.group.pk, form_data['group'],
-                         'post_create не правильно сохраняет группу поста')
-        self.assertEqual(new_post.author, self.user,
-                         'post_create не правильно сохраняет автора поста')
 
     def test_post_edit(self):
         """Валидная форма редактирует запись в Post."""
@@ -79,10 +69,3 @@ class PostFormTests(TestCase):
             id=self.post.id
         ).exists(),
             'Не сохранилась запись с заданным текстом в нуном посте')
-        edit_post = Post.objects.get(id=self.post.id)
-        self.assertEqual(edit_post.text, form_data['text'],
-                         'post_create не правильно сохраняет текст поста')
-        self.assertEqual(edit_post.group.pk, form_data['group'],
-                         'post_create не правильно сохраняет группу поста')
-        self.assertEqual(edit_post.author, self.user,
-                         'post_create не правильно сохраняет автора поста')
