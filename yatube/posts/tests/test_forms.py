@@ -32,7 +32,6 @@ class PostFormTests(TestCase):
 
     def test_post_create(self):
         """Валидная форма создает запись в Post."""
-        posts_count = Post.objects.count()
         form_data = {
             'text': 'Тестовый текст 1',
             'group': self.group.id
