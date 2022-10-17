@@ -24,7 +24,7 @@ class PostsPagesTestCase(TestCase):
         """Пост при создании добавлен корректно и не появился
         настранице другой группы"""
         self.group2 = Group.objects.create(title='Тестовая группа 2',
-                                      slug='test_group2')
+                                           slug='test_group2')
         response_group = self.authorized_client.get(
             reverse('posts:group_list', args=[self.group.slug]))
         response_group2 = self.authorized_client.get(
