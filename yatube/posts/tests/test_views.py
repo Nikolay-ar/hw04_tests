@@ -21,11 +21,18 @@ class PostsPagesTestCase(TestCase):
         )
 
     def test_post_added_correctly(self):
-        """Пост при создании добавлен корректно"""
+        """Пост при создании добавлен корректно и не появился
+        настранице другой группы"""
+        self.group2 = Group.objects.create(title='Тестовая группа 2',
+                                      slug='test_group2')
         response_group = self.authorized_client.get(
             reverse('posts:group_list', args=[self.group.slug]))
+        response_group2 = self.authorized_client.get(
+            reverse('posts:group_list', args=[self.group2.slug]))
         group = response_group.context['page_obj']
+        group2 = response_group2.context['page_obj']
         self.assertIn(self.post, group, 'поста нет в профиле')
+        self.assertNotIn(self.post, group2, 'пост появился в другой группе')
 
     def test_pages_uses_correct_templates(self):
         """URL адреса используют соответствующие шаблоны"""
